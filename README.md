@@ -1,13 +1,15 @@
-SpreePaypalExpressCheckout
+Spree Paypal Express Checkout
 ==========================
 
-Introduction goes here.
+This is a extension that enables PayPal Express Checkout for Spree Commerce.
+
+Behind the scenes, this extension uses [PayPal Express Checkout](https://developer.paypal.com/docs/integration/direct/express-checkout/integration-jsv4/)
 
 ## Installation
 
 1. Add this extension to your Gemfile with this line:
   ```ruby
-  gem 'spree_paypal_express_checkout', github: '[your-github-handle]/spree_paypal_express_checkout', branch: 'X-X-stable'
+  gem 'spree_paypal_express_checkout', github: 'isabellaSantos/spree_paypal_express_checkout', branch: '3-1-stable'
   ```
 
   The `branch` option is important: it must match the version of Spree you're using.
@@ -50,4 +52,4 @@ If you'd like to contribute, please take a look at the
 [instructions](CONTRIBUTING.md) for installing dependencies and crafting a good
 pull request.
 
-Copyright (c) 2017 [name of extension creator], released under the New BSD License
+Copyright (c) 2017 Isabella Santos, released under the New BSD License
