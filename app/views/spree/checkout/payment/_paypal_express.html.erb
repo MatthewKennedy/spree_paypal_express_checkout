@@ -1,0 +1,52 @@
+<div id="paypal-button"></div>
+
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+  var displayErrorMessage = function(message) {
+    var alertId = 'alert' + Math.random().toString(36).substr(2, 5);
+    $('#checkout').prepend('<div class="alert alert-error" id="' + alertId + '">' + message + '</div>');
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+    setTimeout(function() {
+      $('#' + alertId).fadeOut('fast', function() {
+        $(this).remove()
+      })
+    }, 5000);
+  };
+
+  $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').change(function() {
+    if ($(this).prop('value') == <%= payment_method.id %>) {
+      $('#checkout_form_payment input[type=submit]').hide().prop('disabled', true)
+    } else {
+      $('#checkout_form_payment input[type=submit]').show().prop('disabled', false)
+    }
+  });
+
+  paypal.Button.render({
+    env: '<%= payment_method.preferred_server %>',
+    payment: function(resolve, reject) {
+      var CREATE_PAYMENT_URL = '<%= paypal_checkouts_create_url(payment_method.id, { order_id: @order.number }) %>';
+      paypal.request.post(CREATE_PAYMENT_URL)
+        .then(function(data) { resolve(data.paymentID); })
+        .catch(function(err) { reject(err); });
+    },
+    onAuthorize: function(data) {
+      var EXECUTE_PAYMENT_URL = '<%= paypal_checkouts_confirm_url(payment_method.id, { order_id: @order.number }) %>';
+      paypal.request.post(EXECUTE_PAYMENT_URL,
+        { paymentID: data.paymentID, payerID: data.payerID })
+          .then(function(data) {
+            window.location.replace(data.path);
+          })
+          .catch(function(xhr) {
+            var response = JSON.parse(xhr.response);
+            displayErrorMessage(response.error);
+          });
+    },
+    onCancel: function(data, actions) {
+      displayErrorMessage('<%= Spree.t(:payment_has_been_cancelled) %>')
+    },
+    onError: function(data) {
+      displayErrorMessage('<%= Spree.t(:payment_has_been_cancelled) %>')
+    }
+  }, '#paypal-button');
+
+</script>

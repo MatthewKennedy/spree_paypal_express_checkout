@@ -1,0 +1,31 @@
+<fieldset>
+  <h3><%= Spree.t(:paypal_express_checkout) %></h3>
+
+  <table class="table table-condensed">
+    <tr>
+      <th><label><%= Spree.t(:paypal_state) %></label></th>
+      <th><label><%= Spree.t(:paypal_payer_id) %></label></th>
+      <th><label><%= Spree.t(:paypal_payment_id) %></label></th>
+    </tr>
+    <tr>
+      <td><%= payment.source.state %></td>
+      <td><%= payment.source.payer_id %></td>
+      <td><%= payment.source.payment_id %></td>
+    </tr>
+  </table>
+
+  <% if payment.source.refund_id.present? %>
+    <table class="table table-condensed">
+      <tr>
+        <th><label><%= Spree.t(:paypal_refund_type) %></label></th>
+        <th><label><%= Spree.t(:paypal_refund_id) %></label></th>
+        <th><label><%= Spree.t(:paypal_refunded_at) %></label></th>
+      </tr>
+      <tr>
+        <td><%= payment.source.refund_type %></td>
+        <td><%= payment.source.refund_id %></td>
+        <td><%= l payment.source.refunded_at %></td>
+      </tr>
+    </table>
+  <% end %>
+</fieldset>
