@@ -25,6 +25,10 @@ module Spree
       PayPal::SDK::REST::DataTypes::Payment
     end
 
+    def payment_sale_class
+      PayPal::SDK::REST::Sale
+    end
+
     def provider
       provider_class.set_config(
         mode: preferred_server,
@@ -68,7 +72,7 @@ module Spree
       provider
       payment = payment_source_class.find(source.payment_id)
       sale_id = payment.transactions.first.related_resources.first.sale.id
-      sale = PayPal::SDK::REST::Sale.find(sale_id)
+      sale = payment_sale_class.find(sale_id)
       paypal_refund = sale.refund_request({
         amount:{
           total: amount,

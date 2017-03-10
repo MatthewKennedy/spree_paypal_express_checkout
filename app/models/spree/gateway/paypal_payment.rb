@@ -8,7 +8,7 @@ module Spree
     end
 
     def payment_payload(order, web_profile_id)
-      order_subtotal = order.item_total + order.adjustment_total
+      order_subtotal = order.item_total + order.promo_total
       payload = {
         intent: 'sale',
         experience_profile_id: web_profile_id,
