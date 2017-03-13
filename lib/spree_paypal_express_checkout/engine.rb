@@ -5,7 +5,7 @@ module SpreePaypalExpressCheckout
     engine_name 'spree_paypal_express_checkout'
 
     initializer 'spree.paypal_express_checkout.payment_methods', after: 'spree.register.payment_methods' do |app|
-      app.config.spree.payment_methods << Spree::Gateway::PaypalExpress
+      app.config.spree.payment_methods << Spree::Gateway::PaypalExpressCheckout
     end
 
     config.generators do |g|

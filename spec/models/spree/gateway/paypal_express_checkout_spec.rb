@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Gateway::PaypalExpress do
+describe Spree::Gateway::PaypalExpressCheckout do
 
   let(:paypal_gateway) { FactoryGirl.build(:paypal_express_gateway) }
   let(:paypal_checkout) { FactoryGirl.build(:paypal_checkout) }

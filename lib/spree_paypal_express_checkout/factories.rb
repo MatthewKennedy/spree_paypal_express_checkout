@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :paypal_express_gateway, class: Spree::Gateway::PaypalExpress do
+  factory :paypal_express_gateway, class: Spree::Gateway::PaypalExpressCheckout do
     name 'Paypal Express'
     created_at Date.today
   end

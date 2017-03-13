@@ -1,5 +1,5 @@
 module Spree
-  class Gateway::PaypalExpress < Gateway
+  class Gateway::PaypalExpressCheckout < Gateway
     include PayPal::SDK::REST
     include Gateway::PaypalPayment
     include Gateway::PaypalWebProfile
@@ -46,7 +46,7 @@ module Spree
     end
 
     def method_type
-      'paypal_express'
+      'paypal_express_checkout'
     end
 
     def request_payment(order)
