@@ -31,7 +31,7 @@ module Spree
 
     def provider
       provider_class.set_config(
-        mode: preferred_server,
+        mode: server_mode,
         client_id: preferred_client_id,
         client_secret: preferred_client_secret
       )
@@ -114,6 +114,14 @@ module Spree
         landing_page_type: preferred_landing_page_type,
         temporary: preferred_temporary
       }
+    end
+
+    def server_mode
+      if preferred_test_mode
+        'sandbox'
+      else
+        'live'
+      end
     end
   end
 end
