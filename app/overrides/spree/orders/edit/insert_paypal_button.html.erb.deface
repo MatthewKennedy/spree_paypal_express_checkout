@@ -1,0 +1,2 @@
+<!-- insert_bottom '[data-hook="cart_buttons"] .form-group' -->
+<%= render partial: 'spree/shared/paypal_checkout' %>

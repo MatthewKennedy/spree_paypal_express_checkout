@@ -29,6 +29,36 @@ describe Spree::Gateway::PaypalExpressCheckout do
     end
   end
 
+  context 'confirm' do
+
+    it 'should save payment info in order' do
+      set_paypal_conf
+      paypal_gateway.provider
+      payment_params = JSON.parse(File.read('spec/fixtures/payment_response.json'))
+      stub_payment = paypal_gateway.payment_source_class.new payment_params
+      allow(paypal_gateway.payment_source_class).to receive(:find).and_return(stub_payment)
+      france = create(:france)
+      response = paypal_gateway.confirm('PAY-001', order)
+      order.reload
+
+      expect(response).to be_truthy
+      expect(order.email).to eq 'spree@example.com'
+      expect(order.ship_address.firstname).to eq 'Spree'
+      expect(order.ship_address.lastname).to eq 'Example'
+      expect(order.ship_address.address1).to eq 'Av. de la Pelouse, 87648672 Mayet'
+      expect(order.ship_address.city).to eq 'Paris'
+      expect(order.ship_address.zipcode).to eq '75002'
+      expect(order.ship_address.country).to eq france
+      expect(order.bill_address.firstname).to eq 'Test Name'
+      expect(order.bill_address.lastname).to eq 'Example'
+      expect(order.bill_address.address1).to eq 'Boulevard Jordan, 48'
+      expect(order.bill_address.city).to eq 'Paris'
+      expect(order.bill_address.zipcode).to eq '75014'
+      expect(order.bill_address.country).to eq france
+    end
+
+  end
+
   context 'cancel' do
 
     it 'should cancel the payment' do

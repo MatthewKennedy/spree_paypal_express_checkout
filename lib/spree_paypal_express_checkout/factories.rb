@@ -16,4 +16,11 @@ FactoryGirl.define do
     payment_id 'PAY-001'
     payer_id 'PAYER001'
   end
+
+  factory :france, class: Spree::Country do
+    name 'France'
+    iso_name 'France'
+    iso 'FR'
+    iso3 'FRA'
+  end
 end

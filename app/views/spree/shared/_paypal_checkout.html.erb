@@ -1,0 +1,47 @@
+<% paypal_method = Spree::PaymentMethod.find_by(type: 'Spree::Gateway::PaypalExpressCheckout') %>
+
+<% if paypal_method.present? %>
+  <div id="paypal-button"></div>
+
+  <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+  <script>
+    var displayErrorMessage = function(message) {
+      var alertId = 'alert' + Math.random().toString(36).substr(2, 5);
+      $('#checkout').prepend('<div class="alert alert-error" id="' + alertId + '">' + message + '</div>');
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+      setTimeout(function() {
+        $('#' + alertId).fadeOut('fast', function() {
+          $(this).remove()
+        })
+      }, 5000);
+    };
+
+    paypal.Button.render({
+      env: '<%= paypal_method.preferred_server %>',
+      payment: function(resolve, reject) {
+        var CREATE_PAYMENT_URL = '<%= paypal_checkouts_create_url(paypal_method.id, { order_id: @order.number, without_payer_info: false }) %>';
+        paypal.request.post(CREATE_PAYMENT_URL)
+          .then(function(data) { resolve(data.paymentID); })
+          .catch(function(err) { reject(err); });
+      },
+      onAuthorize: function(data) {
+        var EXECUTE_PAYMENT_URL = '<%= paypal_checkouts_finalize_url(paypal_method.id, { order_id: @order.number }) %>';
+        paypal.request.post(EXECUTE_PAYMENT_URL,
+          { paymentID: data.paymentID, payerID: data.payerID })
+          .then(function(data) {
+            window.location.replace(data.path);
+          })
+          .catch(function(xhr) {
+            var response = JSON.parse(xhr.response);
+            displayErrorMessage(response.error);
+          });
+      },
+      onCancel: function(data, actions) {
+        displayErrorMessage('<%= Spree.t(:payment_has_been_cancelled) %>')
+      },
+      onError: function(data) {
+        displayErrorMessage('<%= Spree.t(:payment_has_been_cancelled) %>')
+      }
+    }, '#paypal-button');
+  </script>
+<% end %>

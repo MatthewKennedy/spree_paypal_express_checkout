@@ -21,10 +21,6 @@ module Spree
       PayPal::SDK::REST
     end
 
-    def payment_source_class
-      PayPal::SDK::REST::DataTypes::Payment
-    end
-
     def payment_sale_class
       PayPal::SDK::REST::Sale
     end
@@ -49,9 +45,9 @@ module Spree
       'paypal_express_checkout'
     end
 
-    def request_payment(order)
+    def request_payment(order, insert_payer_info = true)
       provider
-      payment(order, first_or_new(profile_options).id)
+      payment(order, first_or_new(profile_options).id, insert_payer_info)
     end
 
     def purchase(amount, source, options)
@@ -66,6 +62,30 @@ module Spree
       else
         ActiveMerchant::Billing::Response.new(false, payment.error.message, payment.to_hash, authorization: source.id)
       end
+    end
+
+    def confirm(paypal_payment_id, order)
+      payment = payment_source_class.find(paypal_payment_id)
+      phone = payment.payer.payer_info.phone
+      ship_address = format_address_from_response(payment.payer.payer_info.shipping_address)
+      ship_address[:phone] = phone
+
+      order_attributes = {
+        email: payment.payer.payer_info.email,
+        ship_address_attributes: ship_address
+      }
+
+      if payment.payer.payer_info.billing_address.line1.present?
+        bill_address = format_address_from_response(payment.payer.payer_info.billing_address)
+        bill_address[:phone] = phone
+        bill_address[:firstname] = payment.payer.payer_info.first_name
+        bill_address[:lastname] = payment.payer.payer_info.last_name
+        order_attributes[:bill_address_attributes] = bill_address
+      else
+        order_attributes[:bill_address_attributes] = ship_address
+      end
+
+      order.update_attributes(order_attributes)
     end
 
     def refund(amount, source, options)

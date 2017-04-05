@@ -1,25 +1,24 @@
 module Spree
   module Gateway::PaypalPayment
 
-    def payment(order, web_profile_id)
-      payment_options = payment_payload(order, web_profile_id)
-      @payment = PayPal::SDK::REST::DataTypes::Payment.new(payment_options)
+    def payment_source_class
+      PayPal::SDK::REST::DataTypes::Payment
+    end
+
+    def payment(order, web_profile_id, payer_info = true)
+      payment_options = payment_payload(order, web_profile_id, payer_info)
+      @payment = payment_source_class.new(payment_options)
       return @payment
     end
 
-    def payment_payload(order, web_profile_id)
+    def payment_payload(order, web_profile_id, payer_info)
       order_subtotal = order.item_total + order.promo_total
+
       payload = {
         intent: 'sale',
         experience_profile_id: web_profile_id,
         payer:{
-          payment_method: 'paypal',
-          payer_info:{
-            first_name: order.billing_address.first_name,
-            last_name: order.billing_address.last_name,
-            email: order.email,
-            billing_address: billing_address(order)
-          }
+          payment_method: 'paypal'
         },
         redirect_urls: {
           return_url: store_url(order), # Store.current.url + Core::Engine.routes.url_helpers.paypal_express_return_order_checkout_path(order.id),
@@ -41,6 +40,20 @@ module Spree
           description: 'This is the sale description',
         }]
       }
+
+      if payer_info
+        payer_info = {
+          first_name: order.billing_address.first_name,
+          last_name: order.billing_address.last_name,
+          email: order.email,
+          billing_address: billing_address(order)
+        }
+        payload[:payer].merge!({
+          payer_info: payer_info
+          })
+      end
+
+      payload
     end
 
     def order_line_items(order)
@@ -81,6 +94,21 @@ module Spree
         postal_code: order.billing_address.zipcode,
         phone: order.billing_address.phone,
         state: state_name
+      }
+    end
+
+    def format_address_from_response(address)
+      name = address.recipient_name.split(' ') rescue []
+      country = Spree::Country.find_by iso: address.country_code
+      {
+        firstname: name[0..-2].join(' '),
+        lastname: name[-1],
+        address1: address.line1,
+        address2: address.line2,
+        city: address.city,
+        zipcode: address.postal_code,
+        state_name: address.state,
+        country_id: country.try(:id)
       }
     end
 
