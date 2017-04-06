@@ -19,7 +19,7 @@
     paypal.Button.render({
       env: '<%= paypal_method.preferred_server %>',
       payment: function(resolve, reject) {
-        var CREATE_PAYMENT_URL = '<%= paypal_checkouts_create_url(paypal_method.id, { order_id: @order.number, without_payer_info: false }) %>';
+        var CREATE_PAYMENT_URL = '<%= paypal_checkouts_create_url(paypal_method.id, { order_id: @order.number }) %>';
         paypal.request.post(CREATE_PAYMENT_URL)
           .then(function(data) { resolve(data.paymentID); })
           .catch(function(err) { reject(err); });

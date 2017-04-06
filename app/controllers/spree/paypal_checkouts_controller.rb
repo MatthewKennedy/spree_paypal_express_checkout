@@ -4,10 +4,9 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:create, :confirm, :finalize]
 
     def create
-      payer_info = params[:without_payer_info] || true
       @order = Spree::Order.friendly.find params[:order_id]
       @payment_method = PaymentMethod.find(params[:payment_method_id])
-      @paypal_payment = @payment_method.request_payment(@order, payer_info)
+      @paypal_payment = @payment_method.request_payment(@order)
 
       if @paypal_payment.create
         render json: { paymentID: @paypal_payment.id }

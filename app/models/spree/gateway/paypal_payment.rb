@@ -5,20 +5,21 @@ module Spree
       PayPal::SDK::REST::DataTypes::Payment
     end
 
-    def payment(order, web_profile_id, payer_info = true)
-      payment_options = payment_payload(order, web_profile_id, payer_info)
+    def payment(order, web_profile_id)
+      payment_options = payment_payload(order, web_profile_id)
       @payment = payment_source_class.new(payment_options)
       return @payment
     end
 
-    def payment_payload(order, web_profile_id, payer_info)
+    def payment_payload(order, web_profile_id)
       order_subtotal = order.item_total + order.promo_total
 
       payload = {
         intent: 'sale',
         experience_profile_id: web_profile_id,
         payer:{
-          payment_method: 'paypal'
+          payment_method: 'paypal',
+          payer_info: {}
         },
         redirect_urls: {
           return_url: store_url(order), # Store.current.url + Core::Engine.routes.url_helpers.paypal_express_return_order_checkout_path(order.id),
@@ -41,16 +42,14 @@ module Spree
         }]
       }
 
-      if payer_info
-        payer_info = {
+      payload[:payer][:payer_info][:email] = order.email if order.email.present?
+      if order.billing_address.present?
+        bill_info = {
           first_name: order.billing_address.first_name,
           last_name: order.billing_address.last_name,
-          email: order.email,
           billing_address: billing_address(order)
         }
-        payload[:payer].merge!({
-          payer_info: payer_info
-          })
+        payload[:payer][:payer_info].merge!(bill_info)
       end
 
       payload

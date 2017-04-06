@@ -45,9 +45,9 @@ module Spree
       'paypal_express_checkout'
     end
 
-    def request_payment(order, insert_payer_info = true)
+    def request_payment(order)
       provider
-      payment(order, first_or_new(profile_options).id, insert_payer_info)
+      payment(order, first_or_new(profile_options).id)
     end
 
     def purchase(amount, source, options)
