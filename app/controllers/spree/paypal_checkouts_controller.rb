@@ -5,6 +5,7 @@ module Spree
 
     def create
       @order = Spree::Order.friendly.find params[:order_id]
+      @order.set_paypal_shipping
       @payment_method = PaymentMethod.find(params[:payment_method_id])
       @paypal_payment = @payment_method.request_payment(@order)
 
