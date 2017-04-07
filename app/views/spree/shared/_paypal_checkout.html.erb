@@ -3,7 +3,7 @@
 <% if paypal_method.present? %>
   <div id="paypal-button"></div>
 
-  <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+  <script src="https://www.paypalobjects.com/api/checkout.js" data-log-level="error"></script>
   <script>
     var displayErrorMessage = function(message) {
       var alertId = 'alert' + Math.random().toString(36).substr(2, 5);
