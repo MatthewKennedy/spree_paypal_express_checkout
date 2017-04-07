@@ -10,6 +10,7 @@ module Spree
         package = shipment.to_package
         shipping_methods = shipment.available_paypal_shipping_methods
         rates = shipment.paypal_shipping_rates
+        rates.each { |rate| rate.save }
       end
       set_shipments_cost
       apply_free_shipping_promotions

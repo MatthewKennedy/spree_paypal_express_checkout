@@ -18,12 +18,15 @@ module Spree
       package = to_package
       shipping_methods = available_paypal_shipping_methods(display_filter)
       rates = shipping_methods.map do |shipping_method|
-        cost = shipping_method.calculator.compute(package)
-
-        shipping_method.shipping_rates.new(
-          shipment: self,
-          cost: cost
-        ) if cost
+        begin
+          cost = shipping_method.calculator.compute(package)
+          shipping_method.shipping_rates.new(
+            shipment: self,
+            cost: cost
+          ) if cost
+        rescue
+          next
+        end
       end.compact
 
       rates.min_by(&:cost).selected = true if rates.any?
