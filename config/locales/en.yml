@@ -1,10 +1,10 @@
----
 en:
   spree:
     payment_has_been_cancelled: The payment has been cancelled.
     paypal_error_checkout: An error occurred when try connect to PayPal. Please try again.
     complete_checkout: Please complete Paypal Express Checkout before continuing
     paypal_express_checkout: Paypal Express Checkout
+    enable_guest_checkout: Enable guest checkout
     paypal_transaction: Transaction
     paypal_state: Payment Status
     paypal_payer_id: Payer ID

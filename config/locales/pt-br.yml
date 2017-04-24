@@ -1,0 +1,14 @@
+pt-BR:
+  spree:
+    payment_has_been_cancelled: O pagamento foi cancelado.
+    paypal_error_checkout: "Ocorreu um erro na comunicação com o PayPal. Por favor, tente novamente."
+    complete_checkout: "Por favor, complete PayPal Express Checkout antes de continuar"
+    paypal_express_checkout: Paypal Express Checkout
+    enable_guest_checkout: "Habilitar Pedido como Convidado"
+    paypal_transaction: "Transação"
+    paypal_state: Status do pagamento
+    paypal_payer_id: ID do pagador
+    paypal_payment_id: "ID da transação"
+    paypal_refund_id: Refund ID
+    paypal_refund_type: Refund Type
+    paypal_refunded_at: Refunded At

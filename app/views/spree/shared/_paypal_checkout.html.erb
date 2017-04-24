@@ -1,6 +1,6 @@
 <% paypal_method = Spree::PaymentMethod.find_by(type: 'Spree::Gateway::PaypalExpressCheckout') %>
 
-<% if paypal_method.present? %>
+<% if paypal_method.present? && paypal_method.preferred_enable_guest_checkout %>
   <div id="paypal-button"></div>
 
   <script src="https://www.paypalobjects.com/api/checkout.js" data-log-level="error"></script>

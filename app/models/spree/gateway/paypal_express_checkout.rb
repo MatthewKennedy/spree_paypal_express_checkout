@@ -4,18 +4,19 @@ module Spree
     include Gateway::PaypalPayment
     include Gateway::PaypalWebProfile
 
-    preference :client_id,          :string
-    preference :client_secret,      :string
-    preference :server,             :string, default: 'production'
-    preference :brand_name,         :string
-    preference :allow_note,         :boolean, default: false
-    preference :no_shipping,        :boolean, default: true
-    preference :address_override,   :integer, default: 1
-    preference :landing_page_type,  :string,  default:'billing'
-    preference :temporary,          :boolean, default: true
-    preference :locale_code,        :string,  default: 'US'
-    preference :profile_name,       :string
-    preference :logo_url,           :string, default: 'https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-rect-paypal-60px.png'
+    preference :client_id,             :string
+    preference :client_secret,         :string
+    preference :server,                :string, default: 'production'
+    preference :brand_name,            :string
+    preference :allow_note,            :boolean, default: false
+    preference :no_shipping,           :boolean, default: true
+    preference :address_override,      :integer, default: 1
+    preference :landing_page_type,     :string,  default:'billing'
+    preference :temporary,             :boolean, default: true
+    preference :locale_code,           :string,  default: 'US'
+    preference :profile_name,          :string
+    preference :logo_url,              :string, default: 'https://www.paypalobjects.com/webstatic/en_US/i/btn/png/blue-rect-paypal-60px.png'
+    preference :enable_guest_checkout, :boolean, default: false
 
     def provider_class
       PayPal::SDK::REST
