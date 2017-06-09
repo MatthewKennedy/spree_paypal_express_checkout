@@ -4,5 +4,6 @@ Spree::Core::Engine.routes.draw do
   post 'paypal_checkouts/confirm/:payment_method_id', to: 'paypal_checkouts#confirm', as: :paypal_checkouts_confirm
   post 'paypal_checkouts/finalize/:payment_method_id', to: 'paypal_checkouts#finalize', as: :paypal_checkouts_finalize
   post 'paypal_checkouts/cancel', to: 'paypal_checkouts#cancel', as: :paypal_checkouts_cancel
+  get  'paypal_checkouts/order/:order_id', to: 'paypal_checkouts#order', as: :paypal_checkouts_order
 
 end

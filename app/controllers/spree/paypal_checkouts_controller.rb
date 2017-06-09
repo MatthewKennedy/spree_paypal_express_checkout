@@ -61,18 +61,24 @@ module Spree
       unless @payment_method.confirm(params[:paymentID], @order)
         render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
       end
-
+      
       until @order.state == "complete"
         if @order.next!
           @order.update_with_updater!
         else
-          # TODO: refund no pagamento (ou erro)
-          render status: 500, json: { error: @order.errors.full_messages.join(', ') }
+          payment = @order.payments.last
+          @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options)
+          render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
         end
       end
 
-      flash.now['order_completed'] = true
-      render json: { path: completion_route }
+      render json: { path: spree.paypal_checkouts_order_path(@order.number) }
+    end
+
+    def order
+      @order = Spree::Order.friendly.find params[:order_id]
+      flash['order_completed'] = true
+      redirect_to completion_route
     end
 
     private
