@@ -1,7 +1,7 @@
 module Spree
   Order.class_eval do
 
-    def set_paypal_shipping
+    def set_cart_shipping
       return if shipments.any?
       create_proposed_shipments
       shipments.each do |shipment|

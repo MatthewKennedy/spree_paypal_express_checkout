@@ -5,7 +5,7 @@ module Spree
 
     def create
       @order = Spree::Order.friendly.find params[:order_id]
-      @order.set_paypal_shipping
+      @order.set_cart_shipping
       @payment_method = PaymentMethod.find(params[:payment_method_id])
       @paypal_payment = @payment_method.request_payment(@order)
 
@@ -61,7 +61,7 @@ module Spree
       unless @payment_method.confirm(params[:paymentID], @order)
         render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
       end
-      
+
       until @order.state == "complete"
         if @order.next!
           @order.update_with_updater!
