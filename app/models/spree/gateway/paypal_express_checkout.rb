@@ -52,6 +52,7 @@ module Spree
     end
 
     def purchase(amount, source, options)
+      provider
       payment = payment_source_class.find(source.payment_id)
 
       executed_payment = payment.execute(payer_id: source.payer_id)
@@ -66,6 +67,7 @@ module Spree
     end
 
     def confirm(paypal_payment_id, order)
+      provider
       payment = payment_source_class.find(paypal_payment_id)
       phone = payment.payer.payer_info.phone
       ship_address = format_address_from_response(payment.payer.payer_info.shipping_address)
