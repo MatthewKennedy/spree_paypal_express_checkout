@@ -12,3 +12,4 @@ en:
     paypal_refund_id: Refund ID
     paypal_refund_type: Refund Type
     paypal_refunded_at: Refunded At
+    paypal_failed_payment: Unfortunately your payment was not approved by PayPal. Please check your data or try another payment method.

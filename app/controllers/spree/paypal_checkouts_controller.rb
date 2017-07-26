@@ -31,11 +31,15 @@ module Spree
       })
 
       until @order.state == "complete"
-        if @order.next!
-          @order.update_with_updater!
-        else
-          # TODO: refund no pagamento (ou erro)
-          render status: 500, json: { error: @order.errors.full_messages.join(', ') }
+        begin
+          if @order.next!
+            @order.update_with_updater!
+          else
+            # TODO: refund no pagamento (ou erro)
+            render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
+          end
+        rescue StateMachines::InvalidTransition
+          render status: 500, json: { error: Spree.t(:paypal_failed_payment) } and return
         end
       end
 
