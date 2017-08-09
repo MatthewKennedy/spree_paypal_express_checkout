@@ -60,9 +60,9 @@ module Spree
       if executed_payment
         sale_id = payment.transactions.first.related_resources.first.sale.id
         source.update(sale_id: sale_id)
-        ActiveMerchant::Billing::Response.new(true, 'Success', payment.to_hash, authorization: source.id)
+        ActiveMerchant::Billing::Response.new(true, 'Success', {}, authorization: sale_id)
       else
-        ActiveMerchant::Billing::Response.new(false, payment.error.message, payment.to_hash, authorization: source.id)
+        ActiveMerchant::Billing::Response.new(false, payment.error.message, payment.to_hash, authorization: sale_id)
       end
     end
 

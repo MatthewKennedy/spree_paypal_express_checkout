@@ -26,6 +26,7 @@ module Spree
           cancel_url: store_url(order)  # Store.current.url + Core::Engine.routes.url_helpers.paypal_express_cancel_order_checkout_path(order.id),
         },
         transactions:[{
+          invoice_number: order.number,
           item_list:{
             items: order_line_items(order)
           },
