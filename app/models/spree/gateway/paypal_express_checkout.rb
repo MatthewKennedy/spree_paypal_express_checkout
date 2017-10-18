@@ -75,6 +75,7 @@ module Spree
 
       order_attributes = {
         email: payment.payer.payer_info.email,
+        special_instructions: 'PayPal Guest Checkout',
         ship_address_attributes: ship_address
       }
 

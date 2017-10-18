@@ -75,7 +75,7 @@ module Spree
           render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
         end
       end
-
+  
       render json: { path: spree.paypal_checkouts_order_path(@order.number) }
     end
 

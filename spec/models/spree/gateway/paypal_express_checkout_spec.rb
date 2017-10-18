@@ -43,6 +43,7 @@ describe Spree::Gateway::PaypalExpressCheckout do
 
       expect(response).to be_truthy
       expect(order.email).to eq 'spree@example.com'
+      expect(order.special_instructions).to eq "PayPal Guest Checkout"
       expect(order.ship_address.firstname).to eq 'Spree'
       expect(order.ship_address.lastname).to eq 'Example'
       expect(order.ship_address.address1).to eq 'Av. de la Pelouse, 87648672 Mayet'
