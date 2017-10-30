@@ -67,15 +67,21 @@ module Spree
       end
 
       until @order.state == "complete"
-        if @order.next!
-          @order.update_with_updater!
-        else
+        begin
+          if @order.next!
+            @order.update_with_updater!
+          else
+            payment = @order.payments.last
+            @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options)
+            render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
+          end  
+        rescue StateMachines::InvalidTransition => e
           payment = @order.payments.last
           @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options)
-          render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
+          render status: 500, json: { error: e } and return
         end
       end
-  
+
       render json: { path: spree.paypal_checkouts_order_path(@order.number) }
     end
 
