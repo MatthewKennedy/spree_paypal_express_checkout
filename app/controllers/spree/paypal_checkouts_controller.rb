@@ -35,7 +35,8 @@ module Spree
           if @order.next!
             @order.update_with_updater!
           else
-            # TODO: refund no pagamento (ou erro)
+            payment = @order.payments.last
+            @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options) if payment.completed?
             render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
           end
         rescue StateMachines::InvalidTransition
@@ -74,11 +75,12 @@ module Spree
             payment = @order.payments.last
             @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options)
             render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
-          end  
+          end
         rescue StateMachines::InvalidTransition => e
           payment = @order.payments.last
-          @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options)
-          render status: 500, json: { error: e } and return
+          @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options) if payment.completed?
+          error_message = @order.errors.full_messages.join(", ") rescue e.message
+          render status: 500, json: { error: error_message } and return
         end
       end
 
