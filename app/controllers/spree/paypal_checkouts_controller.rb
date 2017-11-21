@@ -83,6 +83,10 @@ module Spree
           render status: 500, json: { error: error_message } and return
         end
       end
+      if @order.payment_state == 'credit_owed'
+        @order.updater.update_payment_state
+        @order.save
+      end
 
       render json: { path: spree.paypal_checkouts_order_path(@order.number) }
     end
