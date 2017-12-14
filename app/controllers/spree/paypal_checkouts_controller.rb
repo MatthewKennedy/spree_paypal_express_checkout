@@ -67,13 +67,21 @@ module Spree
         render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
       end
 
+      order_total = @order.total
+
       until @order.state == "complete"
         begin
           if @order.next!
             @order.update_with_updater!
+
+            if @order.total != order_total
+              payment = @order.payments.last
+              @payment_method.refund(order_total, paypal_checkout, payment.gateway_options) if payment.completed?
+              render status: 500, json: { error: Spree.t(:paypal_wrong_price) } and return
+            end
           else
             payment = @order.payments.last
-            @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options)
+            @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options) if payment.completed?
             render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
           end
         rescue StateMachines::InvalidTransition => e
