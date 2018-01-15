@@ -32,9 +32,7 @@ module Spree
 
       until @order.state == "complete"
         begin
-          if @order.next!
-            @order.update_with_updater!
-          else
+          unless @order.next!
             payment = @order.payments.last
             @payment_method.refund(@order.total, paypal_checkout, payment.gateway_options) if payment.completed?
             render status: 500, json: { error: @order.errors.full_messages.join(', ') } and return
