@@ -55,6 +55,14 @@ module Spree
       provider
       payment = payment_source_class.find(source.payment_id)
 
+      if payment.transactions.any?
+        paypal_total = payment.transactions.first.amount.total
+        paypal_total_cents = Spree::Money.new(paypal_total, currency: options[:currency]).cents
+        if amount != paypal_total_cents
+          return ActiveMerchant::Billing::Response.new(false, Spree.t(:paypal_wrong_price), payment.to_hash)
+        end
+      end
+
       executed_payment = payment.execute(payer_id: source.payer_id)
       source.update(state: payment.state)
       if executed_payment
