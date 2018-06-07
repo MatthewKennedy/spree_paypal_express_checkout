@@ -52,25 +52,29 @@ module Spree
     end
 
     def purchase(amount, source, options)
-      provider
-      payment = payment_source_class.find(source.payment_id)
+      begin
+        provider
+        payment = payment_source_class.find(source.payment_id)
 
-      if payment.transactions.any?
-        paypal_total = payment.transactions.first.amount.total
-        paypal_total_cents = Spree::Money.new(paypal_total, currency: options[:currency]).cents
-        if amount != paypal_total_cents
-          return ActiveMerchant::Billing::Response.new(false, Spree.t(:paypal_wrong_price), payment.to_hash)
+        if payment.transactions.any?
+          paypal_total = payment.transactions.first.amount.total
+          paypal_total_cents = Spree::Money.new(paypal_total, currency: options[:currency]).cents
+          if amount != paypal_total_cents
+            return ActiveMerchant::Billing::Response.new(false, Spree.t(:paypal_wrong_price), payment.to_hash)
+          end
         end
-      end
 
-      executed_payment = payment.execute(payer_id: source.payer_id)
-      source.update(state: payment.state)
-      if executed_payment
-        sale_id = payment.transactions.first.related_resources.first.sale.id
-        source.update(sale_id: sale_id)
-        ActiveMerchant::Billing::Response.new(true, 'Success', {}, authorization: sale_id)
-      else
-        ActiveMerchant::Billing::Response.new(false, payment.error.message, payment.to_hash, authorization: sale_id)
+        executed_payment = payment.execute(payer_id: source.payer_id)
+        source.update(state: payment.state)
+        if executed_payment
+          sale_id = payment.transactions.first.related_resources.first.sale.id
+          source.update(sale_id: sale_id)
+          ActiveMerchant::Billing::Response.new(true, 'Success', {}, authorization: sale_id)
+        else
+          ActiveMerchant::Billing::Response.new(false, payment.error.message, payment.to_hash, authorization: sale_id)
+        end
+      rescue PayPal::SDK::Core::Exceptions::ResourceNotFound => e
+        ActiveMerchant::Billing::Response.new(false, Spree.t(:paypal_failed_payment_id), {}, {})
       end
     end
 

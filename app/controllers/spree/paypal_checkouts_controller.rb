@@ -10,7 +10,11 @@ module Spree
       @paypal_payment = @payment_method.request_payment(@order)
 
       if @paypal_payment.create
-        render json: { paymentID: @paypal_payment.id }
+        if @paypal_payment.id.present?
+          render json: { paymentID: 'asd123' }#@paypal_payment.id }
+        else
+          render status: 500, json: { error: Spree.t(:paypal_failed_payment_id) }
+        end
       else
         render status: 500, json: { error: @paypal_payment.error }
       end
