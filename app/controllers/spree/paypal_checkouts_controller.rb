@@ -13,6 +13,7 @@ module Spree
         if @paypal_payment.id.present?
           render json: { paymentID: 'asd123' }#@paypal_payment.id }
         else
+          deal_with_create_error
           render status: 500, json: { error: Spree.t(:paypal_failed_payment_id) }
         end
       else
@@ -111,6 +112,9 @@ module Spree
 
     def completion_route(custom_params = nil)
       spree.order_path(@order, custom_params)
+    end
+
+    def deal_with_create_error
     end
   end
 end

@@ -74,6 +74,7 @@ module Spree
           ActiveMerchant::Billing::Response.new(false, payment.error.message, payment.to_hash, authorization: sale_id)
         end
       rescue PayPal::SDK::Core::Exceptions::ResourceNotFound => e
+        deal_with_purchase_error
         ActiveMerchant::Billing::Response.new(false, Spree.t(:paypal_failed_payment_id), {}, {})
       end
     end
@@ -158,6 +159,9 @@ module Spree
       else
         'live'
       end
+    end
+
+    def deal_with_purchase_error
     end
   end
 end
