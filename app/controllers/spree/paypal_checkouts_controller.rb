@@ -5,7 +5,14 @@ module Spree
 
     def create
       @order = Spree::Order.friendly.find params[:order_id]
-      @order.set_cart_shipping
+
+      begin
+        @order.set_cart_shipping
+      rescue ActiveRecord::RecordNotSaved => e
+        render status: 500, json: { error: Spree.t(:paypal_error_checkout) } and return
+        deal_with_not_saved_error(@order)
+      end
+
       @payment_method = PaymentMethod.find(params[:payment_method_id])
       @paypal_payment = @payment_method.request_payment(@order)
 
@@ -115,6 +122,9 @@ module Spree
     end
 
     def deal_with_create_error(payment_id)
+    end
+
+    def deal_with_not_saved_error(order)
     end
   end
 end
