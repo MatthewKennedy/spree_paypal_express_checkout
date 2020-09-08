@@ -30,7 +30,8 @@ module Spree
       provider_class.set_config(
         mode: server_mode,
         client_id: preferred_client_id,
-        client_secret: preferred_client_secret
+        client_secret: preferred_client_secret,
+        ssl_options: { ca_file: nil }
       )
     end
 

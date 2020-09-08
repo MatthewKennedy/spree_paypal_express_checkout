@@ -1,4 +1,4 @@
-class CreateSpreePaypalCheckouts < ActiveRecord::Migration
+class CreateSpreePaypalCheckouts < ActiveRecord::Migration[4.2]
   def change
     create_table :spree_paypal_checkouts do |t|
       t.string    :payer_id

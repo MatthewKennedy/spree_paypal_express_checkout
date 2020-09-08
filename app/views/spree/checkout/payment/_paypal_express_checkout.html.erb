@@ -13,13 +13,13 @@
     }, 5000);
   };
 
-  $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').change(function() {
-    if ($(this).prop('value') == <%= payment_method.id %>) {
-      $('#checkout_form_payment input[type=submit]').hide().prop('disabled', true)
-    } else {
-      $('#checkout_form_payment input[type=submit]').show().prop('disabled', false)
-    }
-  });
+  // $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').change(function() {
+  //   if ($(this).prop('value') == <%= payment_method.id %>) {
+  //     $('#checkout_form_payment input[type=submit]').hide().prop('disabled', true)
+  //   } else {
+  //     $('#checkout_form_payment input[type=submit]').show().prop('disabled', false)
+  //   }
+  // });
 
   paypal.Button.render({
     env: '<%= payment_method.preferred_server %>',

@@ -4,7 +4,7 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:create, :confirm, :finalize]
 
     def create
-      @order = Spree::Order.friendly.find params[:order_id]
+      @order = current_order
 
       begin
         @order.set_cart_shipping
@@ -29,7 +29,7 @@ module Spree
     end
 
     def confirm
-      @order = Spree::Order.friendly.find params[:order_id]
+      @order = current_order
 
       paypal_checkout = Spree::PaypalCheckout.new(
         payer_id: params[:payerID],
@@ -59,7 +59,7 @@ module Spree
     end
 
     def finalize
-      @order = Spree::Order.friendly.find params[:order_id]
+      @order = current_order
       @payment_method = Spree::PaymentMethod.find params[:payment_method_id]
 
       paypal_checkout = Spree::PaypalCheckout.new(
@@ -110,15 +110,15 @@ module Spree
     end
 
     def order
-      @order = Spree::Order.friendly.find params[:order_id]
+      @order = current_order
       flash['order_completed'] = true
       redirect_to completion_route
     end
 
     private
 
-    def completion_route(custom_params = nil)
-      spree.order_path(@order, custom_params)
+    def completion_route(order)
+      order_path(order)
     end
 
     def deal_with_create_error(payment_id)
